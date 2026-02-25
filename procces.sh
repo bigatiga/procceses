@@ -1,12 +1,23 @@
 #!/bin/bash
 
-echo "Проверка зомби-процессов..."
+echo "===== ВСЕ ПРОЦЕССЫ ====="
+ps aux
 
-ZOMBIES=$(ps -eo pid,ppid,user,stat,cmd | awk '$4 ~ /Z/')
+echo ""
+echo "===== ТОП 10 ПО CPU ====="
+ps aux --sort=-%cpu | head -n 11
 
-if [ -z "$ZOMBIES" ]; then
-  echo "Зомби-процессов не найдено."
+echo ""
+echo "===== ТОП 10 ПО ПАМЯТИ ====="
+ps aux --sort=-%mem | head -n 11
+
+echo ""
+echo "===== ПРОВЕРКА ЗОМБИ ПРОЦЕССОВ ====="
+zombies=$(ps aux | awk '{ if ($8=="Z") print $0 }')
+
+if [ -z "$zombies" ]; then
+    echo "Зомби процессов нет"
 else
-  echo "Найдены зомби-процессы:"
-  echo "$ZOMBIES"
+    echo "Найдены зомби процессы:"
+    echo "$zombies"
 fi
